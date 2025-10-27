@@ -1,0 +1,23 @@
+diff --git a/setup.py b/setup.py
+index 5a6201a..e27c432 100755
+--- a/setup.py
++++ b/setup.py
+@@ -17,6 +17,9 @@ from setuptools import find_packages, setup
+ from torch.utils.cpp_extension import CppExtension, CUDA_HOME, CUDAExtension
+ 
+ 
++TORCH_MAJOR = int(torch.__version__.split(".")[0])
++TORCH_MINOR = int(torch.__version__.split(".")[1])
++
+ def get_existing_ccbin(nvcc_args: List[str]) -> Optional[str]:
+     """
+     Given a list of nvcc arguments, return the compiler if specified.
+@@ -153,7 +156,7 @@ setup(
+     )
+     + [trainer],
+     package_dir={trainer: "projects/implicitron_trainer"},
+-    install_requires=["iopath"],
++    install_requires=[f"torch=={TORCH_MAJOR}.{TORCH_MINOR}.*", "iopath"],
+     extras_require={
+         "all": ["matplotlib", "tqdm>4.29.0", "imageio", "ipywidgets"],
+         "dev": ["flake8", "usort"],
