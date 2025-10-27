@@ -1,17 +1,17 @@
 diff --git a/setup.py b/setup.py
-index 5a6201a..e27c432 100755
+index 5a6201a..0d20041 100755
 --- a/setup.py
 +++ b/setup.py
-@@ -17,6 +17,9 @@ from setuptools import find_packages, setup
- from torch.utils.cpp_extension import CppExtension, CUDA_HOME, CUDAExtension
+@@ -141,6 +141,9 @@ else:
  
+ trainer = "pytorch3d.implicitron_trainer"
  
 +TORCH_MAJOR = int(torch.__version__.split(".")[0])
 +TORCH_MINOR = int(torch.__version__.split(".")[1])
 +
- def get_existing_ccbin(nvcc_args: List[str]) -> Optional[str]:
-     """
-     Given a list of nvcc arguments, return the compiler if specified.
+ setup(
+     name="pytorch3d",
+     version=__version__,
 @@ -153,7 +156,7 @@ setup(
      )
      + [trainer],

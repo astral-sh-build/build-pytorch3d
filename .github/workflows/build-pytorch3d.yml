@@ -146,6 +146,7 @@ jobs:
             MANYLINUX_CUDA_COMPAT_VERSION="${{ env.MANYLINUX_CUDA_COMPAT_VERSION }}"
             CI_AUDITWHEEL_EXCLUDES="${{ env.CI_AUDITWHEEL_EXCLUDES }}"
             FORCE_CUDA="1"
+            PYTORCH3D_FORCE_CXX11_ABI=${{ matrix.cxx11-abi }}
             TORCH_CUDA_ARCH_LIST=${{ env.TORCH_CUDA_ARCH_LIST }}
             MAX_JOBS=8
             UV_PYTHON=/opt/python/cp${{ env.MATRIX_PYTHON_VERSION }}-cp${{ env.MATRIX_PYTHON_VERSION }}/bin/python
