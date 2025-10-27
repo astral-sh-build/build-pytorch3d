@@ -1,0 +1,23 @@
+diff --git a/setup.py b/setup.py
+index 5a6201a..0d20041 100755
+--- a/setup.py
++++ b/setup.py
+@@ -141,6 +141,9 @@ else:
+ 
+ trainer = "pytorch3d.implicitron_trainer"
+ 
++TORCH_MAJOR = int(torch.__version__.split(".")[0])
++TORCH_MINOR = int(torch.__version__.split(".")[1])
++
+ setup(
+     name="pytorch3d",
+     version=__version__,
+@@ -153,7 +156,7 @@ setup(
+     )
+     + [trainer],
+     package_dir={trainer: "projects/implicitron_trainer"},
+-    install_requires=["iopath"],
++    install_requires=[f"torch=={TORCH_MAJOR}.{TORCH_MINOR}.*", "iopath"],
+     extras_require={
+         "all": ["matplotlib", "tqdm>4.29.0", "imageio", "ipywidgets"],
+         "dev": ["flake8", "usort"],

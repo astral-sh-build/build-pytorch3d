@@ -1,0 +1,18 @@
+diff --git a/setup.py b/setup.py
+index 5a6201a..f58f04e 100755
+--- a/setup.py
++++ b/setup.py
+@@ -16,6 +16,13 @@ import torch
+ from setuptools import find_packages, setup
+ from torch.utils.cpp_extension import CppExtension, CUDA_HOME, CUDAExtension
+ 
++FORCE_CXX11_ABI = os.getenv("PYTORCH3D_FORCE_CXX11_ABI", "FALSE") == "TRUE"
++
++# HACK: The compiler flag -D_GLIBCXX_USE_CXX11_ABI is set to be the same as
++# torch._C._GLIBCXX_USE_CXX11_ABI
++# https://github.com/pytorch/pytorch/blob/8472c24e3b5b60150096486616d98b7bea01500b/torch/utils/cpp_extension.py#L920
++if FORCE_CXX11_ABI:
++    torch._C._GLIBCXX_USE_CXX11_ABI = True
+ 
+ def get_existing_ccbin(nvcc_args: List[str]) -> Optional[str]:
+     """
