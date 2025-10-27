@@ -10,36 +10,37 @@ import json
 from packaging.version import Version
 
 # Versions of PyTorch we actually want to include in the matrix.
-TORCH_VERSIONS = [
+PYTORCH3D_SUPPORTED_TORCH_VERSIONS = [
+    "2.4.1",
+    "2.5.1",
+    "2.6.0",
     "2.7.1",
     "2.8.0",
     "2.9.0",
 ]
 
 ARCH_TORCH_PAIRS = {
-    "x86_64": ["2.7.1", "2.8.0", "2.9.0"],
+    "x86_64": ["2.4.1", "2.5.1", "2.6.0", "2.7.1", "2.8.0", "2.9.0"],
     "aarch64": ["2.7.1", "2.8.0", "2.9.0"],
 }
 
-# Versions of Python we actually want to include in the matrix.
-PYTHON_VERSIONS = [
-    "3.10",
-    "3.11",
-    "3.12",
-    "3.13",
-]
-
 # Supported Python versions for each PyTorch version.
-# We use these to filter out the matrix.
+# See: https://github.com/pytorch/pytorch/blob/main/RELEASE.md#release-compatibility-matrix
 TORCH_PYTHON_SUPPORT = {
-    "2.7.1": ["3.10", "3.11", "3.12", "3.13"],
-    "2.8.0": ["3.10", "3.11", "3.12", "3.13"],
-    "2.9.0": ["3.10", "3.11", "3.12", "3.13"],
+    "2.4": ["3.9", "3.10", "3.11", "3.12"],
+    "2.5": ["3.9", "3.10", "3.11", "3.12"],
+    "2.6": ["3.9", "3.10", "3.11", "3.12"],
+    "2.7": ["3.9", "3.10", "3.11", "3.12", "3.13"],
+    "2.8": ["3.9", "3.10", "3.11", "3.12", "3.13"],
+    "2.9": ["3.10", "3.11", "3.12", "3.13", "3.14"],
 }
 
 # Minimum and maximum CUDA versions for each PyTorch version.
 # See: https://github.com/pytorch/pytorch/blob/main/RELEASE.md#release-compatibility-matrix
 PYTORCH_CUDA_RANGES: dict[str, tuple[str, str]] = {
+    "2.4": ("11.8", "12.4"),
+    "2.5": ("11.8", "12.4"),
+    "2.6": ("11.8", "12.6"),
     "2.7": ("11.8", "12.8"),
     "2.8": ("11.8", "12.9"),
     "2.9": ("12.6", "13.0"),
@@ -47,6 +48,12 @@ PYTORCH_CUDA_RANGES: dict[str, tuple[str, str]] = {
 
 # Actual CUDA versions to build against for each PyTorch version.
 PYTORCH_CUDA_VERSIONS: dict[tuple[str, str], list[str]] = {
+    ("2.4", "x86_64"): ["12.1", "12.4"],
+    ("2.4", "aarch64"): ["12.4"],
+    ("2.5", "x86_64"): ["12.1", "12.4"],
+    ("2.5", "aarch64"): ["12.4"],
+    ("2.6", "x86_64"): ["12.4", "12.6"],
+    ("2.6", "aarch64"): ["12.6"],
     ("2.7", "x86_64"): ["12.6", "12.8"],
     ("2.7", "aarch64"): ["12.8"],
     ("2.8", "x86_64"): ["12.6", "12.8", "12.9"],
@@ -57,6 +64,15 @@ PYTORCH_CUDA_VERSIONS: dict[tuple[str, str], list[str]] = {
 
 # CUDA architectures to build against for each PyTorch version.
 TORCH_CUDA_ARCH_LIST = {
+    # https://github.com/pytorch/pytorch/blob/d990dada86a8ad94882b5c23e859b88c0c255bda/torch/utils/cpp_extension.py#L1938
+    ("2.4", "12.1"): "7.0;7.5;8.0;8.6;9.0+PTX",
+    ("2.4", "12.4"): "7.0;7.5;8.0;8.6;9.0+PTX",
+    # https://github.com/pytorch/pytorch/blob/32f585d9346e316e554c8d9bf7548af9f62141fc/torch/utils/cpp_extension.py#L1937
+    ("2.5", "12.1"): "7.0;7.5;8.0;8.6;9.0+PTX",
+    ("2.5", "12.4"): "7.0;7.5;8.0;8.6;9.0+PTX",
+    # https://github.com/pytorch/pytorch/blob/1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340/.ci/manywheel/build_cuda.sh#L60
+    ("2.6", "12.4"): "7.0;7.5;8.0;8.6;9.0+PTX",
+    ("2.6", "12.6"): "7.0;7.5;8.0;8.6;9.0+PTX",
     # https://github.com/pytorch/pytorch/blob/134179474539648ba7dee1317959529fbd0e7f89/.ci/manywheel/build_cuda.sh#L55
     ("2.7", "12.6"): "7.0;7.5;8.0;8.6;9.0+PTX",
     ("2.7", "12.8"): "7.0;7.5;8.0;8.6;9.0;10.0;12.0+PTX",
@@ -74,6 +90,9 @@ TORCH_CUDA_ARCH_LIST = {
 # The glibc version to use for each PyTorch version, for manylinux builds.
 # See: https://github.com/pytorch/pytorch/blob/main/RELEASE.md#release-compatibility-matrix
 TORCH_GLIBC_VERSION: dict[str, str] = {
+    "2.4": "2_27",
+    "2.5": "2_27",
+    "2.6": "2_27",
     "2.7": "2_27",
     "2.8": "2_27",
     "2.9": "2_27",
@@ -113,7 +132,6 @@ AUDITWHEEL_CUDA_VERSION_EXCLUDES = {
     ],
 }
 
-
 # Matrix exclusions.
 EXCLUSIONS = [
     # No exclusions yet.
@@ -131,15 +149,12 @@ def main() -> None:
     rows = []
     for target_arch, torch_versions in ARCH_TORCH_PAIRS.items():
         for torch_version in torch_versions:
-            if torch_version not in TORCH_VERSIONS:
+            if torch_version not in PYTORCH3D_SUPPORTED_TORCH_VERSIONS:
                 continue
 
             torch_version_parsed = Version(torch_version)
             torch_x_y = f"{torch_version_parsed.major}.{torch_version_parsed.minor}"
-            for python_version in TORCH_PYTHON_SUPPORT[torch_version]:
-                if python_version not in PYTHON_VERSIONS:
-                    continue
-
+            for python_version in TORCH_PYTHON_SUPPORT[torch_x_y]:
                 cuda_versions = PYTORCH_CUDA_VERSIONS[(torch_x_y, target_arch)]
                 for cuda_version in cuda_versions:
                     cuda_version_parsed = Version(cuda_version)
