@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       PYTORCH3D_VERSION:
-        description: "PyTorch3D version"
+        description: "PyTorch3D release tag (e.g., v0.7.9)"
         required: true
-        default: "fc6a6b895185a502c4064fc5ea7ecb760fd1a0d6"
+        default: "v0.7.9"
         type: string
   release:
     types: [created]
@@ -61,20 +61,16 @@ jobs:
         id: pytorch3d-version
         run: |
           # Extract PyTorch3D version from tag. Tags can be either:
-          # - fc6a6b895185a502c4064fc5ea7ecb760fd1a0d6 (legacy format; maps directly to PyTorch3D commit)
-          # - fc6a6b895185a502c4064fc5ea7ecb760fd1a0d6-r1 (new format; strip -rN suffix to get PyTorch3D commit)
+          # - v0.7.9 (legacy format; maps directly to PyTorch3D version)
+          # - v0.7.9-r1 (new format; strip -rN suffix to get PyTorch3D version)
           if [ "${GITHUB_EVENT_NAME}" = "release" ]; then
             TAG="${GITHUB_REF_NAME}"
             # Remove -rN suffix if present
             PYTORCH3D_VERSION="${TAG%-r*}"
-            # Map version to commit hash
-            if [ "${PYTORCH3D_VERSION}" = "0.7.8" ]; then
-              PYTORCH3D_VERSION="fc6a6b895185a502c4064fc5ea7ecb760fd1a0d6"
-            fi
           elif [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
             PYTORCH3D_VERSION="${INPUTS_PYTORCH3D_VERSION}"
           else
-            PYTORCH3D_VERSION="fc6a6b895185a502c4064fc5ea7ecb760fd1a0d6"
+            PYTORCH3D_VERSION="v0.7.9"
           fi
           echo "version=${PYTORCH3D_VERSION}" >> $GITHUB_OUTPUT
           echo "Using PyTorch3D version: ${PYTORCH3D_VERSION}"
