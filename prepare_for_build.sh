@@ -1,31 +1,32 @@
 #!/bin/bash
-# Script to prepare the build environment for pytorch3d.
+# Script to prepare the build environment for PyTorch3D.
 #
 # Example usage:
-#   ./prepare_for_build.sh fc6a6b895185a502c4064fc5ea7ecb760fd1a0d6
+#   ./prepare_for_build.sh v0.7.9
 
 set -euxo pipefail
 
-# When run from CI, this script is in build_scripts/prepare_for_build.sh
-# and needs to reference patches from that directory
-export SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export ROOT=`pwd`
 
 if [ $# -ne 1 ]; then
-    echo "Usage: $0 <pytorch3d-version>"
-    echo "Example: $0 fc6a6b895185a502c4064fc5ea7ecb760fd1a0d6"
+    echo "Usage: $0 <pytorch3d_version>"
+    echo "Example: $0 v0.7.9"
     exit 1
 fi
 
 PYTORCH3D_VERSION=$1
 
-# Ensure that the pytorch3d version is supported.
-if [ ! -d "${SCRIPT_DIR}/patches/${PYTORCH3D_VERSION}" ]; then
-    echo "Error: patches/${PYTORCH3D_VERSION} directory does not exist"
-    exit 1
-fi
-
 # Apply patches.
-for patch in "${SCRIPT_DIR}/patches/${PYTORCH3D_VERSION}"/*.patch; do
-    patch -p1 -d ${ROOT} -i ${patch}
-done
+patch_dir="${ROOT}/build_scripts/patches/${PYTORCH3D_VERSION}"
+
+# Not all PyTorch3D versions need patches.
+if [ ! -d "${patch_dir}" ]; then
+    echo "Warning: nothing to patch: patches/${PYTORCH3D_VERSION} directory does not exist"
+else
+    for patch in "${patch_dir}"/*.patch; do
+        # Skip if no patch files exist (only .gitkeep)
+        if [ -f "${patch}" ]; then
+            patch -p1 -d "${ROOT}" -i "${patch}"
+        fi
+    done
+fi
