@@ -144,7 +144,7 @@ jobs:
             FORCE_CUDA="1"
             PYTORCH3D_FORCE_CXX11_ABI=${{ matrix.cxx11-abi }}
             TORCH_CUDA_ARCH_LIST=${{ env.TORCH_CUDA_ARCH_LIST }}
-            MAX_JOBS=8
+            MAX_JOBS=2
             UV_PYTHON=/opt/python/cp${{ env.MATRIX_PYTHON_VERSION }}-cp${{ env.MATRIX_PYTHON_VERSION }}/bin/python
           CIBW_SKIP: "*musllinux*"
           CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel repair -w /tmp/cibuildwheel/repaired_wheel {wheel} ${CI_AUDITWHEEL_EXCLUDES}"
