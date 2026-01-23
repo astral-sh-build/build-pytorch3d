@@ -6,6 +6,7 @@
 # ///
 
 import json
+import os
 
 from packaging.version import Version
 
@@ -244,6 +245,9 @@ def main() -> None:
             row["RUNNER"] = "depot-ubuntu-24.04-arm"
         else:
             raise ValueError(f"Unknown target arch: {row['target-arch']}")
+
+    if os.environ.get("LIMIT_MATRIX", "").lower() == "true":
+        rows = rows[:1]
 
     print(json.dumps(rows))
 
