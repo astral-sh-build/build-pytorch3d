@@ -1,0 +1,16 @@
+diff --git a/setup.py b/setup.py
+index 5a6201a..6d58d02 100755
+--- a/setup.py
++++ b/setup.py
+@@ -129,6 +129,12 @@ def get_extensions():
+ # Retrieve __version__ from the package.
+ __version__ = runpy.run_path("pytorch3d/__init__.py")["__version__"]
+
++# Auto-generate local version from CUDA and PyTorch versions.
++cuda_version = torch.version.cuda
++torch_version = ".".join(torch.__version__.split(".")[:2])
++if cuda_version:
++    __version__ = f"{__version__}+cu.{cuda_version}.torch.{torch_version}"
++
+
+ if os.getenv("PYTORCH3D_NO_NINJA", "0") == "1":
