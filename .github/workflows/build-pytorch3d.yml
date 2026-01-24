@@ -86,6 +86,10 @@ jobs:
           ref: ${{ steps.pytorch3d-version.outputs.version }}
           persist-credentials: false
 
+      - name: Get source commit SHA
+        id: source-commit
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
       - name: Checkout utils
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -151,6 +155,21 @@ jobs:
           CIBW_SKIP: "*musllinux*"
           CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel repair -w /tmp/cibuildwheel/repaired_wheel {wheel} ${CI_AUDITWHEEL_EXCLUDES}"
           CIBW_BUILD_FRONTEND: "build[uv]; args: --no-isolation"
+
+      - name: Embed SBOM into wheel
+        run: |
+          for wheel in dist/*.whl; do
+            uv run --script build_scripts/embed_patches.py "$wheel" "build_scripts/patches/${PYTORCH3D_VERSION}" \
+              --source-repo "https://github.com/facebookresearch/pytorch3d" \
+              --source-tag "${PYTORCH3D_VERSION}" \
+              --source-commit "${SOURCE_COMMIT}" \
+              --build-repo "https://github.com/astral-sh-build/build-pytorch3d" \
+              --build-commit "${BUILD_COMMIT}"
+          done
+        env:
+          PYTORCH3D_VERSION: ${{ steps.pytorch3d-version.outputs.version }}
+          SOURCE_COMMIT: ${{ steps.source-commit.outputs.sha }}
+          BUILD_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Log Built Wheels
         run: |
