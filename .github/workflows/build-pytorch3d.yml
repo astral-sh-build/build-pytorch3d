@@ -29,12 +29,14 @@ jobs:
     outputs:
       matrix: ${{ steps.generate-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
 
       - name: Install uv
         uses: astral-sh/setup-uv@6b9c6063abd6010835644d4c2e1bef4cf5cd0fca # v6
+        with:
+          version: "0.9.26"
 
       - name: Generate build matrix
         id: generate-matrix
@@ -82,7 +84,7 @@ jobs:
           INPUTS_PYTORCH3D_VERSION: ${{ inputs.PYTORCH3D_VERSION }}
 
       - name: Checkout PyTorch3D
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           repository: facebookresearch/pytorch3d
           ref: ${{ steps.pytorch3d-version.outputs.version }}
@@ -93,7 +95,7 @@ jobs:
         run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Checkout utils
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           path: build_scripts
           persist-credentials: false
@@ -101,6 +103,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@6b9c6063abd6010835644d4c2e1bef4cf5cd0fca # v6
         with:
+          version: "0.9.26"
           enable-cache: false
 
       - name: Set CUDA and PyTorch versions
