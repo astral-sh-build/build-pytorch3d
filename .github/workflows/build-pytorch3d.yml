@@ -161,10 +161,13 @@ jobs:
           CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel repair -w /tmp/cibuildwheel/repaired_wheel {wheel} ${CI_AUDITWHEEL_EXCLUDES}"
           CIBW_BUILD_FRONTEND: "build[uv]; args: --no-isolation"
 
-      - name: Embed SBOM into wheel
+      - name: Embed metadata into wheel
         run: |
           for wheel in dist/*.whl; do
             uv run --script build_scripts/embed_patches.py "$wheel" "build_scripts/patches/${PYTORCH3D_VERSION}" \
+              --license-expression "BSD-3-Clause AND MIT" \
+              --license-file "LICENSE:LICENSE" \
+              --license-file "LICENSE-3RD-PARTY:LICENSE-3RD-PARTY" \
               --source-repo "https://github.com/facebookresearch/pytorch3d" \
               --source-tag "${PYTORCH3D_VERSION}" \
               --source-commit "${SOURCE_COMMIT}" \
