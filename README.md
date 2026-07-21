@@ -8,8 +8,9 @@ architectures.
 
 Following the PyTorch convention, artifacts are published to a separate index for each CUDA
 version. Each wheel has a local version suffix that identifies the CUDA, PyTorch, and C++ ABI it
-was built against, such as `pytorch3d==0.7.9+cu12.8torch2.10.0cxx11abiTRUE`, and requires the
-matching PyTorch minor release.
+was built against, such as
+`pytorch3d==0.7.9+cu.12.8.torch.2.10.cu12.8torch2.10.0cxx11abiTRUE`, and requires the matching
+PyTorch minor release.
 
 Pre-built wheels are available on [Astral's GPU indexes](https://wheels.astral.sh/index.html).
 For example, to install a CUDA 12.8 build:
