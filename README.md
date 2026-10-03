@@ -1,18 +1,21 @@
 # build-pytorch3d
 
-Pre-built Linux wheels for [PyTorch3D](https://github.com/facebookresearch/pytorch3d), a library of
-reusable components for deep learning with 3D data, across Python, PyTorch, CUDA, and CPU
-architectures.
+Pre-built Linux wheels for
+[PyTorch3D](https://github.com/facebookresearch/pytorch3d), a library of
+reusable components for deep learning with 3D data, across Python, PyTorch,
+CUDA, and CPU architectures.
 
 ## Installation
 
-Following the PyTorch convention, artifacts are published to a separate index for each CUDA
-version. Each wheel has a local version suffix that identifies the CUDA and PyTorch versions it
-was built against, such as `pytorch3d==0.7.9+cu.12.8.torch.2.10`, and requires the matching
-PyTorch minor release.
+Following the PyTorch convention, artifacts are published to a separate index
+for each CUDA version. Each wheel has a local version suffix that identifies the
+CUDA and PyTorch versions it was built against, such as
+`pytorch3d==0.7.9+cu.12.8.torch.2.10`, and requires the matching PyTorch minor
+release.
 
-Pre-built wheels are available on [Astral's GPU indexes](https://wheels.astral.sh/index.html).
-For example, to install a CUDA 12.8 build:
+Pre-built wheels are available on
+[Astral's GPU indexes](https://wheels.astral.sh/index.html). For example, to
+install a CUDA 12.8 build:
 
 ```console
 $ uv add pytorch3d --index astral-cu128=https://wheels.astral.sh/simple/cu128/
@@ -68,6 +71,8 @@ The latest release, PyTorch3D 0.7.9, supports the following combinations:
 | 2.10.0  | 3.10–3.14 | 12.6, 12.8, 12.9 | 12.6, 12.8, 12.9 |
 | 2.11.0  | 3.10–3.14 | 12.6, 12.8, 12.9 | 12.6, 12.8, 12.9 |
 | 2.12.1  | 3.10–3.14 | 12.6             | 12.6             |
+| 2.13.0  | 3.10–3.15 | 12.6             | 12.6             |
+| 2.14.1  | 3.10–3.15 | 12.6             | 12.6             |
 
 ## License
 
